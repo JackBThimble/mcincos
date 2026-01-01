@@ -1,0 +1,7 @@
+- Clang compiler
+- LLVM linker (ld.lld, lld)
+- llvm-ar
+- llvm-objcopy
+- llvm-readelf
+- ninja
+- qemu-system-x86_64
