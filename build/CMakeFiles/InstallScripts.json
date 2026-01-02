@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/jake/mcincos/build/cmake_install.cmake",
+		"/home/jake/mcincos/build/kernel/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

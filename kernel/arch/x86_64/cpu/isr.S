@@ -3,18 +3,18 @@
 
 .extern isr_common_handler
 
-.macro ISR_NOERR n
-.global isr_\n
-isr_\n:
+.macro ISR_NOERR vec
+.global isr_\vec
+isr_\vec:
     push 0
-    push \n
+    push \vec
     jmp isr_common
 .endm
 
-.macro ISR_ERR n
-.global isr_\n
-isr_\n:
-    push \n
+.macro ISR_ERR vec
+.global isr_\vec
+isr_\vec:
+    push \vec
     jmp isr_common
 .endm
 
@@ -57,6 +57,45 @@ isr_common:
     add rsp, 16
     iretq
 
-ISR_NOERR 0
-ISR_NOERR 1
-ISR_ERR   14
+ISR_NOERR 0   /* #DE */
+ISR_NOERR 1   /* #DB */
+ISR_NOERR 2   /* NMI */
+ISR_NOERR 3   /* #BP */
+ISR_NOERR 4   /* #OF */
+ISR_NOERR 5   /* #BR */
+ISR_NOERR 6   /* #UD */
+ISR_NOERR 7   /* #NM */
+ISR_ERR   8   /* #DF */
+ISR_NOERR 9   /* (legacy) */
+ISR_ERR   10  /* #TS */
+ISR_ERR   11  /* #NP */
+ISR_ERR   12  /* #SS */
+ISR_ERR   13  /* #GP */
+ISR_ERR   14  /* #PF */
+ISR_NOERR 15
+ISR_NOERR 16  /* #MF */
+ISR_ERR   17  /* #AC */
+ISR_NOERR 18  /* #MC */
+ISR_NOERR 19  /* #XM/#XF */
+ISR_NOERR 20
+ISR_ERR   21  /* #CP (if supported) */
+ISR_NOERR 22
+ISR_NOERR 23
+ISR_NOERR 24
+ISR_NOERR 25
+ISR_NOERR 26
+ISR_NOERR 27
+ISR_NOERR 28
+ISR_NOERR 29
+ISR_NOERR 30
+ISR_NOERR 31
+
+/* Table of stub pointers for idt.c */
+.section .rodata
+.global isr_stub_table
+isr_stub_table:
+    .quad isr_0,  isr_1,  isr_2,  isr_3,  isr_4,  isr_5,  isr_6,  isr_7
+    .quad isr_8,  isr_9,  isr_10, isr_11, isr_12, isr_13, isr_14, isr_15
+    .quad isr_16, isr_17, isr_18, isr_19, isr_20, isr_21, isr_22, isr_23
+    .quad isr_24, isr_25, isr_26, isr_27, isr_28, isr_29, isr_30, isr_31
+

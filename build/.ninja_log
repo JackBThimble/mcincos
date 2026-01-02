@@ -1,0 +1,14 @@
+# ninja log v7
+1	15	1767326757040609116	kernel/CMakeFiles/cincos.elf.dir/core/kmain.c.obj	e684e503a257a721
+1	18	1767326584743774051	kernel/CMakeFiles/cincos.elf.dir/core/print.c.obj	2952ad560a03c4c5
+1	14	1767262811052597816	kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/boot/limine.c.obj	70723132d2100753
+1	32	1767262811052350184	kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/boot/entry.S.obj	3f5569b6b4206e8e
+15	39	1767326757055935633	kernel/cincos	f03e89b3b55d5519
+1	17	1767326584744107504	kernel/CMakeFiles/cincos.elf.dir/mem/pmm.c.obj	23b2c35b2ff901c8
+1	15	1767326584743899814	kernel/CMakeFiles/cincos.elf.dir/core/panic.c.obj	1e1d4ac080c4408f
+1	16	1767262811052673222	kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/idt.c.obj	5827d3d2c4ff9ae4
+1	32	1767262811052924428	kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/isr.S.obj	c785c5746fac657c
+1	16	1767326584743981795	kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/idt_handler.c.obj	3aefba842bdfa17e
+1	15	1767328615566665834	kernel/CMakeFiles/cincos.elf.dir/core/kmain.c.obj	e684e503a257a721
+1	17	1767328615568083647	kernel/CMakeFiles/cincos.elf.dir/mem/vmm.c.obj	e309b73c7c7a169a
+17	40	1767328615584088393	kernel/cincos	c45e575cfc2bcc57
