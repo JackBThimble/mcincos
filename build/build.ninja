@@ -97,6 +97,22 @@ build kernel/CMakeFiles/cincos.elf.dir/core/panic.c.obj: C_COMPILER__cincos.2eel
   OBJECT_FILE_DIR = kernel/CMakeFiles/cincos.elf.dir/core
   TARGET_SUPPORT_DIR = kernel/CMakeFiles/cincos.elf.dir
 
+build kernel/CMakeFiles/cincos.elf.dir/core/sched.c.obj: C_COMPILER__cincos.2eelf_unscanned_ /home/jake/mcincos/kernel/core/sched.c || cmake_object_order_depends_target_cincos.elf
+  DEP_FILE = kernel/CMakeFiles/cincos.elf.dir/core/sched.c.obj.d
+  FLAGS = -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror
+  INCLUDES = -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include
+  OBJECT_DIR = kernel/CMakeFiles/cincos.elf.dir
+  OBJECT_FILE_DIR = kernel/CMakeFiles/cincos.elf.dir/core
+  TARGET_SUPPORT_DIR = kernel/CMakeFiles/cincos.elf.dir
+
+build kernel/CMakeFiles/cincos.elf.dir/core/string.c.obj: C_COMPILER__cincos.2eelf_unscanned_ /home/jake/mcincos/kernel/core/string.c || cmake_object_order_depends_target_cincos.elf
+  DEP_FILE = kernel/CMakeFiles/cincos.elf.dir/core/string.c.obj.d
+  FLAGS = -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror
+  INCLUDES = -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include
+  OBJECT_DIR = kernel/CMakeFiles/cincos.elf.dir
+  OBJECT_FILE_DIR = kernel/CMakeFiles/cincos.elf.dir/core
+  TARGET_SUPPORT_DIR = kernel/CMakeFiles/cincos.elf.dir
+
 build kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/boot/entry.S.obj: ASM_COMPILER__cincos.2eelf_unscanned_ /home/jake/mcincos/kernel/arch/x86_64/boot/entry.S || cmake_object_order_depends_target_cincos.elf
   DEP_FILE = kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/boot/entry.S.obj.d
   FLAGS = -ffreestanding -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror
@@ -177,6 +193,30 @@ build kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/gdt_flush.S.obj: ASM_COMP
   OBJECT_FILE_DIR = kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu
   TARGET_SUPPORT_DIR = kernel/CMakeFiles/cincos.elf.dir
 
+build kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/pic.c.obj: C_COMPILER__cincos.2eelf_unscanned_ /home/jake/mcincos/kernel/arch/x86_64/cpu/pic.c || cmake_object_order_depends_target_cincos.elf
+  DEP_FILE = kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/pic.c.obj.d
+  FLAGS = -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror
+  INCLUDES = -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include
+  OBJECT_DIR = kernel/CMakeFiles/cincos.elf.dir
+  OBJECT_FILE_DIR = kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu
+  TARGET_SUPPORT_DIR = kernel/CMakeFiles/cincos.elf.dir
+
+build kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/pit.c.obj: C_COMPILER__cincos.2eelf_unscanned_ /home/jake/mcincos/kernel/arch/x86_64/cpu/pit.c || cmake_object_order_depends_target_cincos.elf
+  DEP_FILE = kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/pit.c.obj.d
+  FLAGS = -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror
+  INCLUDES = -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include
+  OBJECT_DIR = kernel/CMakeFiles/cincos.elf.dir
+  OBJECT_FILE_DIR = kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu
+  TARGET_SUPPORT_DIR = kernel/CMakeFiles/cincos.elf.dir
+
+build kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/irq.c.obj: C_COMPILER__cincos.2eelf_unscanned_ /home/jake/mcincos/kernel/arch/x86_64/cpu/irq.c || cmake_object_order_depends_target_cincos.elf
+  DEP_FILE = kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/irq.c.obj.d
+  FLAGS = -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror
+  INCLUDES = -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include
+  OBJECT_DIR = kernel/CMakeFiles/cincos.elf.dir
+  OBJECT_FILE_DIR = kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu
+  TARGET_SUPPORT_DIR = kernel/CMakeFiles/cincos.elf.dir
+
 build kernel/CMakeFiles/cincos.elf.dir/mem/pmm.c.obj: C_COMPILER__cincos.2eelf_unscanned_ /home/jake/mcincos/kernel/mem/pmm.c || cmake_object_order_depends_target_cincos.elf
   DEP_FILE = kernel/CMakeFiles/cincos.elf.dir/mem/pmm.c.obj.d
   FLAGS = -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror
@@ -201,7 +241,7 @@ build kernel/CMakeFiles/cincos.elf.dir/mem/vmm.c.obj: C_COMPILER__cincos.2eelf_u
 #############################################
 # Link the executable kernel/cincos
 
-build kernel/cincos: C_EXECUTABLE_LINKER__cincos.2eelf_ kernel/CMakeFiles/cincos.elf.dir/core/kmain.c.obj kernel/CMakeFiles/cincos.elf.dir/core/print.c.obj kernel/CMakeFiles/cincos.elf.dir/core/panic.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/boot/entry.S.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/boot/limine.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/idt.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/idt_handler.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/isr.S.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/cpu_local.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/syscall.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/syscall_entry.S.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/gdt.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/gdt_flush.S.obj kernel/CMakeFiles/cincos.elf.dir/mem/pmm.c.obj kernel/CMakeFiles/cincos.elf.dir/mem/vmm.c.obj
+build kernel/cincos: C_EXECUTABLE_LINKER__cincos.2eelf_ kernel/CMakeFiles/cincos.elf.dir/core/kmain.c.obj kernel/CMakeFiles/cincos.elf.dir/core/print.c.obj kernel/CMakeFiles/cincos.elf.dir/core/panic.c.obj kernel/CMakeFiles/cincos.elf.dir/core/sched.c.obj kernel/CMakeFiles/cincos.elf.dir/core/string.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/boot/entry.S.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/boot/limine.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/idt.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/idt_handler.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/isr.S.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/cpu_local.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/syscall.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/syscall_entry.S.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/gdt.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/gdt_flush.S.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/pic.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/pit.c.obj kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/irq.c.obj kernel/CMakeFiles/cincos.elf.dir/mem/pmm.c.obj kernel/CMakeFiles/cincos.elf.dir/mem/vmm.c.obj
   FLAGS = -ffreestanding -nostdlib
   LINK_FLAGS = -nostdlib -Wl,-no-pie -Wl,--build-id=none -T /home/jake/mcincos/kernel/arch/x86_64/boot/linker.ld -fuse-ld=lld
   OBJECT_DIR = kernel/CMakeFiles/cincos.elf.dir

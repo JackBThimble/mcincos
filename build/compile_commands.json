@@ -19,6 +19,18 @@
 },
 {
   "directory": "/home/jake/mcincos/build",
+  "command": "/usr/bin/clang --target=x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/core/sched.c.obj -c /home/jake/mcincos/kernel/core/sched.c",
+  "file": "/home/jake/mcincos/kernel/core/sched.c",
+  "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/core/sched.c.obj"
+},
+{
+  "directory": "/home/jake/mcincos/build",
+  "command": "/usr/bin/clang --target=x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/core/string.c.obj -c /home/jake/mcincos/kernel/core/string.c",
+  "file": "/home/jake/mcincos/kernel/core/string.c",
+  "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/core/string.c.obj"
+},
+{
+  "directory": "/home/jake/mcincos/build",
   "command": "/usr/bin/clang -target x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/boot/entry.S.obj -c /home/jake/mcincos/kernel/arch/x86_64/boot/entry.S",
   "file": "/home/jake/mcincos/kernel/arch/x86_64/boot/entry.S",
   "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/boot/entry.S.obj"
@@ -76,6 +88,24 @@
   "command": "/usr/bin/clang -target x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/gdt_flush.S.obj -c /home/jake/mcincos/kernel/arch/x86_64/cpu/gdt_flush.S",
   "file": "/home/jake/mcincos/kernel/arch/x86_64/cpu/gdt_flush.S",
   "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/gdt_flush.S.obj"
+},
+{
+  "directory": "/home/jake/mcincos/build",
+  "command": "/usr/bin/clang --target=x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/pic.c.obj -c /home/jake/mcincos/kernel/arch/x86_64/cpu/pic.c",
+  "file": "/home/jake/mcincos/kernel/arch/x86_64/cpu/pic.c",
+  "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/pic.c.obj"
+},
+{
+  "directory": "/home/jake/mcincos/build",
+  "command": "/usr/bin/clang --target=x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/pit.c.obj -c /home/jake/mcincos/kernel/arch/x86_64/cpu/pit.c",
+  "file": "/home/jake/mcincos/kernel/arch/x86_64/cpu/pit.c",
+  "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/pit.c.obj"
+},
+{
+  "directory": "/home/jake/mcincos/build",
+  "command": "/usr/bin/clang --target=x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/irq.c.obj -c /home/jake/mcincos/kernel/arch/x86_64/cpu/irq.c",
+  "file": "/home/jake/mcincos/kernel/arch/x86_64/cpu/irq.c",
+  "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/irq.c.obj"
 },
 {
   "directory": "/home/jake/mcincos/build",

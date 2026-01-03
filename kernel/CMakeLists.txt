@@ -20,6 +20,8 @@ target_sources(cincos.elf PRIVATE
   core/kmain.c
   core/print.c
   core/panic.c
+  core/sched.c
+  core/string.c
   arch/x86_64/boot/entry.S
   arch/x86_64/boot/limine.c
   arch/x86_64/cpu/idt.c
@@ -30,6 +32,9 @@ target_sources(cincos.elf PRIVATE
   arch/x86_64/cpu/syscall_entry.S
   arch/x86_64/cpu/gdt.c
   arch/x86_64/cpu/gdt_flush.S
+  arch/x86_64/cpu/pic.c
+  arch/x86_64/cpu/pit.c
+  arch/x86_64/cpu/irq.c
   mem/pmm.c
   mem/vmm.c
 )

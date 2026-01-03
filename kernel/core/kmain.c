@@ -3,13 +3,16 @@
 #include "../arch/x86_64/cpu/cpu_local.h"
 #include "../arch/x86_64/cpu/gdt.h"
 #include "../arch/x86_64/cpu/idt.h"
+#include "../arch/x86_64/cpu/irq.h"
+#include "../arch/x86_64/cpu/pit.h"
 #include "../arch/x86_64/cpu/syscall.h"
 
 #include "../mem/pmm.h"
 #include "../mem/vmm.h"
 
-#include "panic.h"
+#include "core/panic.h"
 #include "print.h"
+#include "sched.h"
 
 static void early_banner(void) {
     kprintln(
@@ -72,6 +75,9 @@ __attribute__((noreturn)) static void enter_user(uint64_t user_rip,
         __asm__ volatile("hlt");
 }
 
+static thread_t t0;
+static thread_t t1;
+
 void kmain(void) {
     // =========================================================================
     // 0) EARLY BOOT: assume Limine got us to long mode/paging
@@ -119,41 +125,85 @@ void kmain(void) {
     // =========================================================================
     kprintln("[init] cpu_local + kernel stack");
     {
-        // TODO: allocate per-cpu kernel stacks and store in cpu_local via GS
-        // base
-        // For now: single-core bootstrap
-        void *kstack_phys = pmm_alloc_pages(2);
-        if (!kstack_phys)
-            panic("failed to alloc kernel stack");
-        uint64_t kstack_top =
-            (uint64_t)phys_to_virt((uint64_t)kstack_phys + 2 * 4096);
+        // TODO: set up TSS + IST stacks and load TR (needed for robust
+        // faults)
+        // TODO: when SMP: allocate cpu_local per core + set
+        // MSR_KERNEL_GS_BASE per core
 
-        // kernel_rsp points to top of stack (HHDM-mapped)
-        g_cpu_local.kernel_rsp = kstack_top;
-        gdt_set_kernel_stack(kstack_top);
-
-        // TODO: set up TSS + IST stacks and load TR (needed for robust faults)
-        // TODO: when SMP: allocate cpu_local per core + set MSR_KERNEL_GS_BASE
-        // per core
-
+        kprintln("df_stack");
         void *df_stack = pmm_alloc_pages(2);
         gdt_set_ist(1, (uint64_t)phys_to_virt((uint64_t)df_stack + 2 * 4096));
 
+        kprintln("alloc pf stack");
         void *pf_stack = pmm_alloc_pages(2);
         gdt_set_ist(2, (uint64_t)phys_to_virt((uint64_t)pf_stack + 2 * 4096));
 
+        kprintln("alloc nmi stack");
         void *nmi_stack = pmm_alloc_pages(2);
         gdt_set_ist(3, (uint64_t)phys_to_virt((uint64_t)nmi_stack + 2 * 4096));
-    }
+        // TODO: allocate per-cpu kernel stacks and store in cpu_local via GS
+        // base
+        // For now: single-core bootstrap
 
-    kprintln("[init] idt");
-    idt_init();
+        void *kstack0 = pmm_alloc_pages(2);
+        void *kstack1 = pmm_alloc_pages(2);
+
+        uint64_t kstack0_top =
+            (uint64_t)phys_to_virt((uint64_t)kstack0 + 2 * 4096);
+        uint64_t kstack1_top =
+            (uint64_t)phys_to_virt((uint64_t)kstack1 + 2 * 4096);
+
+        // map two user stacks and two code pages
+        uint64_t user_code0 = 0x0000000000400000ull;
+        uint64_t user_stack0 = 0x0000000000700000ull;
+        uint64_t user_code1 = 0x0000000000500000ull;
+        uint64_t user_stack1 = 0x0000000000800000ull;
+
+        void *uc0_phys = pmm_alloc_pages(1);
+        void *us0_phys = pmm_alloc_pages(1);
+        void *uc1_phys = pmm_alloc_pages(1);
+        void *us1_phys = pmm_alloc_pages(1);
+
+        if (!uc0_phys || !us0_phys || !uc1_phys || !us1_phys)
+            panic("user pages allocation failed");
+        vmm_map_page(user_code0, (uint64_t)uc0_phys, PTE_U | PTE_W);
+        vmm_map_page(user_stack0, (uint64_t)uc0_phys, PTE_U | PTE_W);
+        vmm_map_page(user_code1, (uint64_t)uc0_phys, PTE_U | PTE_W);
+        vmm_map_page(user_code0, (uint64_t)uc0_phys, PTE_U | PTE_W);
+        // allocate/map pages
+        kprintln("build blob 1");
+        build_user_blob((uint8_t *)user_code0);
+        kprintln("build blob 2");
+        build_user_blob((uint8_t *)user_code1);
+
+        kprintln("thread init 1");
+        thread_init_user(&t0, user_code0, user_stack0 + 4096, kstack0_top);
+        kprintln("thread 2");
+        thread_init_user(&t1, user_code1, user_stack1 + 4096, kstack1_top);
+
+        g_cpu_local.kernel_rsp = kstack0_top;
+        gdt_set_kernel_stack(kstack0_top);
+
+        kprintln("[init] sched");
+        sched_init(&t0);
+
+        sched_add(&t1);
+
+        kprintln("[init] idt");
+        idt_init();
+        irq_init();
+        irq_register_handler(0, sched_on_tick);
+        pit_init(1000);
+        idt_enable();
+        kprintln("[init] syscall");
+        syscall_init();
+
+        enter_user(user_code0, user_stack0 + 4096);
+    }
 
     // =========================================================================
     // 5) SYSCALL ABI: establish user/kernel boundary early
     // =========================================================================
-    kprintln("[init] syscall");
-    syscall_init();
 
     // TODO: define syscall ABI doc (registers, error returns, struct packing)
     // TODO: implement copyin/copyout (validate user pointers, avoid kernel
