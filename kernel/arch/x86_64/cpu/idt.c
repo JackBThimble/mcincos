@@ -1,4 +1,5 @@
 #include "idt.h"
+#include "gdt.h"
 
 typedef struct __attribute__((packed)) {
         uint16_t offset_low;
@@ -19,12 +20,13 @@ static idt_entry_t g_idt[256];
 
 extern void isr_stub_table(void);
 
-void idt_set_gate(uint8_t vec, void (*isr)(void), uint8_t type_attr) {
+void idt_set_gate(uint8_t vec, void (*isr)(void), uint8_t type_attr,
+                  uint8_t ist) {
     uint64_t addr = (uint64_t)isr;
     g_idt[vec] =
         (idt_entry_t){.offset_low = (uint16_t)(addr & 0xffff),
-                      .selector = 0x28,
-                      .ist = 0,
+                      .selector = KERNEL_CS,
+                      .ist = (uint8_t)(ist & 0x7),
                       .type_attr = type_attr,
                       .offset_mid = (uint16_t)((addr >> 16) & 0xffff),
                       .offset_high = (uint32_t)((addr >> 32) & 0xffffffff),
@@ -42,9 +44,12 @@ static inline void lidt(const idtr_t *idtr) {
 
 void idt_init(void) {
     void (**table)(void) = (void (**)(void))&isr_stub_table;
-    for (uint8_t i = 0; i < 32; i++) {
-        idt_set_gate(i, table[i], IDT_TYPE_INTERRUPT);
-    }
+    for (uint8_t i = 0; i < 32; i++)
+        idt_set_gate(i, table[i], IDT_TYPE_INTERRUPT, 0);
+
+    idt_set_gate(2, table[2], IDT_TYPE_INTERRUPT, 1);   /* NMI */
+    idt_set_gate(8, table[8], IDT_TYPE_INTERRUPT, 1);   /* #DF */
+    idt_set_gate(14, table[14], IDT_TYPE_INTERRUPT, 2); /* #PF */
 
     idtr_t idtr = {.limit = (uint16_t)(sizeof(g_idt) - 1),
                    .base = (uint64_t)&g_idt[0]};

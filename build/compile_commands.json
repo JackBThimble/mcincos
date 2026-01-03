@@ -49,6 +49,36 @@
 },
 {
   "directory": "/home/jake/mcincos/build",
+  "command": "/usr/bin/clang --target=x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/cpu_local.c.obj -c /home/jake/mcincos/kernel/arch/x86_64/cpu/cpu_local.c",
+  "file": "/home/jake/mcincos/kernel/arch/x86_64/cpu/cpu_local.c",
+  "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/cpu_local.c.obj"
+},
+{
+  "directory": "/home/jake/mcincos/build",
+  "command": "/usr/bin/clang --target=x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/syscall.c.obj -c /home/jake/mcincos/kernel/arch/x86_64/cpu/syscall.c",
+  "file": "/home/jake/mcincos/kernel/arch/x86_64/cpu/syscall.c",
+  "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/syscall.c.obj"
+},
+{
+  "directory": "/home/jake/mcincos/build",
+  "command": "/usr/bin/clang -target x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/syscall_entry.S.obj -c /home/jake/mcincos/kernel/arch/x86_64/cpu/syscall_entry.S",
+  "file": "/home/jake/mcincos/kernel/arch/x86_64/cpu/syscall_entry.S",
+  "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/syscall_entry.S.obj"
+},
+{
+  "directory": "/home/jake/mcincos/build",
+  "command": "/usr/bin/clang --target=x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/gdt.c.obj -c /home/jake/mcincos/kernel/arch/x86_64/cpu/gdt.c",
+  "file": "/home/jake/mcincos/kernel/arch/x86_64/cpu/gdt.c",
+  "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/gdt.c.obj"
+},
+{
+  "directory": "/home/jake/mcincos/build",
+  "command": "/usr/bin/clang -target x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/gdt_flush.S.obj -c /home/jake/mcincos/kernel/arch/x86_64/cpu/gdt_flush.S",
+  "file": "/home/jake/mcincos/kernel/arch/x86_64/cpu/gdt_flush.S",
+  "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/arch/x86_64/cpu/gdt_flush.S.obj"
+},
+{
+  "directory": "/home/jake/mcincos/build",
   "command": "/usr/bin/clang --target=x86_64-elf -I/home/jake/mcincos/kernel -I/home/jake/mcincos/kernel/mem -I/home/jake/mcincos/kernel/arch/x86_64/cpu -I/home/jake/mcincos/third_party/limine/limine-protocol/include -ffreestanding -nostdlib -ffreestanding -fno-stack-protector -fno-omit-frame-pointer -mno-red-zone -fno-pic -Wall -Wextra -Werror -o kernel/CMakeFiles/cincos.elf.dir/mem/pmm.c.obj -c /home/jake/mcincos/kernel/mem/pmm.c",
   "file": "/home/jake/mcincos/kernel/mem/pmm.c",
   "output": "/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir/mem/pmm.c.obj"

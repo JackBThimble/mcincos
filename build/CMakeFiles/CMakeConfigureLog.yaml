@@ -1615,8 +1615,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-R0r4LL"
-      binary: "/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-R0r4LL"
+      source: "/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-dDr7zk"
+      binary: "/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-dDr7zk"
     cmakeVariables:
       CMAKE_ASM_USING_LINKER_LLD: "-fuse-ld=lld"
       CMAKE_C_COMPILER_TARGET: "x86_64-elf"
@@ -1629,16 +1629,16 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-R0r4LL'
+        Change Dir: '/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-dDr7zk'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_b21f9
-        [1/2] /usr/bin/clang --target=x86_64-elf   -ffreestanding -nostdlib    -v -MD -MT CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj -MF CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj.d -o CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
+        Run Build Command(s): /usr/bin/ninja -v cmTC_4348a
+        [1/2] /usr/bin/clang --target=x86_64-elf   -ffreestanding -nostdlib    -v -MD -MT CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj -MF CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj.d -o CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
         clang version 21.1.6
         Target: x86_64-unknown-unknown-elf
         Thread model: posix
         InstalledDir: /usr/bin
          (in-process)
-         "/usr/bin/clang-21" -cc1 -triple x86_64-unknown-unknown-elf -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCCompilerABI.c -mrelocation-model static -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -ffreestanding -target-cpu x86-64 -tune-cpu generic -debugger-tuning=gdb -fdebug-compilation-dir=/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-R0r4LL -v -fcoverage-compilation-dir=/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-R0r4LL -resource-dir /usr/lib/clang/21 -dependency-file CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj.d -MT CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj -sys-header-deps -ferror-limit 19 -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -faddrsig -o CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj -x c /usr/share/cmake/Modules/CMakeCCompilerABI.c
+         "/usr/bin/clang-21" -cc1 -triple x86_64-unknown-unknown-elf -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCCompilerABI.c -mrelocation-model static -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -ffreestanding -target-cpu x86-64 -tune-cpu generic -debugger-tuning=gdb -fdebug-compilation-dir=/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-dDr7zk -v -fcoverage-compilation-dir=/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-dDr7zk -resource-dir /usr/lib/clang/21 -dependency-file CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj.d -MT CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj -sys-header-deps -ferror-limit 19 -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -faddrsig -o CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj -x c /usr/share/cmake/Modules/CMakeCCompilerABI.c
         clang -cc1 version 21.1.6 based upon LLVM 21.1.6 default target x86_64-pc-linux-gnu
         #include "..." search starts here:
         #include <...> search starts here:
@@ -1646,7 +1646,7 @@ events:
          /usr/lib/clang/21/include
          /usr/include
         End of search list.
-        [2/2] : && /usr/bin/cmake -E rm -f libcmTC_b21f9.a && /usr/bin/llvm-ar qc libcmTC_b21f9.a  CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj && /usr/bin/llvm-ranlib libcmTC_b21f9.a && :
+        [2/2] : && /usr/bin/cmake -E rm -f libcmTC_4348a.a && /usr/bin/llvm-ar qc libcmTC_4348a.a  CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj && /usr/bin/llvm-ranlib libcmTC_4348a.a && :
         
       exitCode: 0
   -
@@ -1679,16 +1679,16 @@ events:
       Parsed C implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: '/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-R0r4LL']
+        ignore line: [Change Dir: '/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-dDr7zk']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_b21f9]
-        ignore line: [[1/2] /usr/bin/clang --target=x86_64-elf   -ffreestanding -nostdlib    -v -MD -MT CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj -MF CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj.d -o CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
+        ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_4348a]
+        ignore line: [[1/2] /usr/bin/clang --target=x86_64-elf   -ffreestanding -nostdlib    -v -MD -MT CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj -MF CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj.d -o CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
         ignore line: [clang version 21.1.6]
         ignore line: [Target: x86_64-unknown-unknown-elf]
         ignore line: [Thread model: posix]
         ignore line: [InstalledDir: /usr/bin]
         ignore line: [ (in-process)]
-        ignore line: [ "/usr/bin/clang-21" -cc1 -triple x86_64-unknown-unknown-elf -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCCompilerABI.c -mrelocation-model static -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -ffreestanding -target-cpu x86-64 -tune-cpu generic -debugger-tuning=gdb -fdebug-compilation-dir=/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-R0r4LL -v -fcoverage-compilation-dir=/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-R0r4LL -resource-dir /usr/lib/clang/21 -dependency-file CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj.d -MT CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj -sys-header-deps -ferror-limit 19 -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -faddrsig -o CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj -x c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
+        ignore line: [ "/usr/bin/clang-21" -cc1 -triple x86_64-unknown-unknown-elf -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCCompilerABI.c -mrelocation-model static -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -ffreestanding -target-cpu x86-64 -tune-cpu generic -debugger-tuning=gdb -fdebug-compilation-dir=/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-dDr7zk -v -fcoverage-compilation-dir=/home/jake/mcincos/build/CMakeFiles/CMakeScratch/TryCompile-dDr7zk -resource-dir /usr/lib/clang/21 -dependency-file CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj.d -MT CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj -sys-header-deps -ferror-limit 19 -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -faddrsig -o CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj -x c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
         ignore line: [clang -cc1 version 21.1.6 based upon LLVM 21.1.6 default target x86_64-pc-linux-gnu]
         ignore line: [#include "..." search starts here:]
         ignore line: [#include <...> search starts here:]
@@ -1696,7 +1696,7 @@ events:
         ignore line: [ /usr/lib/clang/21/include]
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
-        ignore line: [[2/2] : && /usr/bin/cmake -E rm -f libcmTC_b21f9.a && /usr/bin/llvm-ar qc libcmTC_b21f9.a  CMakeFiles/cmTC_b21f9.dir/CMakeCCompilerABI.c.obj && /usr/bin/llvm-ranlib libcmTC_b21f9.a && :]
+        ignore line: [[2/2] : && /usr/bin/cmake -E rm -f libcmTC_4348a.a && /usr/bin/llvm-ar qc libcmTC_4348a.a  CMakeFiles/cmTC_4348a.dir/CMakeCCompilerABI.c.obj && /usr/bin/llvm-ranlib libcmTC_4348a.a && :]
         ignore line: []
         ignore line: []
         implicit libs: []

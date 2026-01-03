@@ -25,6 +25,11 @@ target_sources(cincos.elf PRIVATE
   arch/x86_64/cpu/idt.c
   arch/x86_64/cpu/idt_handler.c
   arch/x86_64/cpu/isr.S
+  arch/x86_64/cpu/cpu_local.c
+  arch/x86_64/cpu/syscall.c
+  arch/x86_64/cpu/syscall_entry.S
+  arch/x86_64/cpu/gdt.c
+  arch/x86_64/cpu/gdt_flush.S
   mem/pmm.c
   mem/vmm.c
 )
