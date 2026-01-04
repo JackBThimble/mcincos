@@ -1,5 +1,0 @@
-/home/jake/mcincos/build/CMakeFiles/edit_cache.dir
-/home/jake/mcincos/build/CMakeFiles/rebuild_cache.dir
-/home/jake/mcincos/build/kernel/CMakeFiles/cincos.elf.dir
-/home/jake/mcincos/build/kernel/CMakeFiles/edit_cache.dir
-/home/jake/mcincos/build/kernel/CMakeFiles/rebuild_cache.dir

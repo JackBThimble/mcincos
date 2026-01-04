@@ -18,3 +18,5 @@ CMakeUserPresets.json
 *.user
 *.sln.idec
 .vscode/browse.vc.db
+
+.cache/
