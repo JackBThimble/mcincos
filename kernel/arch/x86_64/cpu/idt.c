@@ -20,6 +20,8 @@ static idt_entry_t g_idt[256];
 
 extern void isr_stub_table(void);
 extern void irq_stub_table(void);
+extern void irq_240(void);
+extern void irq_255(void);
 
 void idt_set_gate(uint8_t vec, void (*isr)(void), uint8_t type_attr,
                   uint8_t ist) {
@@ -51,6 +53,8 @@ void idt_init(void) {
     idt_set_gate(2, etable[2], IDT_TYPE_INTERRUPT, 1);   /* NMI */
     idt_set_gate(8, etable[8], IDT_TYPE_INTERRUPT, 1);   /* #DF */
     idt_set_gate(14, etable[14], IDT_TYPE_INTERRUPT, 2); /* #PF */
+    idt_set_gate(240, irq_240, IDT_TYPE_INTERRUPT, 0);
+    idt_set_gate(255, irq_255, IDT_TYPE_INTERRUPT, 0);
 
     void (**itable)(void) = (void (**)(void))&irq_stub_table;
     for (uint8_t i = 0; i < 16; i++)

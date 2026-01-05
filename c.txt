@@ -1,0 +1,320 @@
+• Switch the timer source to LAPIC one-shot and make scheduling tickless (no periodic
+  PIT). Calibration uses PIT one-shot once at boot; the scheduler only rearms when there
+  is another runnable thread.
+
+  - kernel/arch/x86_64/cpu/lapic.h (new file)
+
+  #pragma once
+  #include <stdint.h>
+
+  #define LAPIC_SPURIOUS_VECTOR 0xff
+
+  void lapic_init(void);
+  int lapic_is_enabled(void);
+  void lapic_eoi(void);
+
+  void lapic_timer_init(uint8_t vector);
+  uint32_t lapic_timer_calibrate(uint32_t pit_us);
+  uint32_t lapic_timer_ticks_per_ms(void);
+  void lapic_timer_oneshot(uint32_t ticks);
+  void lapic_timer_oneshot_ms(uint32_t ms);
+  void lapic_timer_stop(void);
+
+  - kernel/arch/x86_64/cpu/lapic.c (new file)
+
+  #include "lapic.h"
+  #include "msr.h"
+  #include "pit.h"
+  #include "pmm.h"
+
+  #define IA32_APIC_BASE 0x1b
+  #define IA32_APIC_BASE_ENABLE (1u << 11)
+
+  #define LAPIC_REG_TPR 0x80
+  #define LAPIC_REG_EOI 0xb0
+  #define LAPIC_REG_SVR 0xf0
+  #define LAPIC_REG_LVT_TIMER 0x320
+  #define LAPIC_REG_TMR_INITCNT 0x380
+  #define LAPIC_REG_TMR_CURRCNT 0x390
+  #define LAPIC_REG_TMR_DIV 0x3e0
+
+  #define LAPIC_SVR_ENABLE (1u << 8)
+  #define LAPIC_LVT_MASK (1u << 16)
+  #define LAPIC_TIMER_DIV_16 0x3
+
+  static volatile uint32_t *g_lapic = 0;
+  static uint8_t g_timer_vector = 0;
+  static uint32_t g_ticks_per_ms = 0;
+
+  static inline void lapic_write(uint32_t reg, uint32_t val) {
+      *(volatile uint32_t *)((uintptr_t)g_lapic + reg) = val;
+      (void)*(volatile uint32_t *)((uintptr_t)g_lapic + reg);
+  }
+
+  static inline uint32_t lapic_read(uint32_t reg) {
+      return *(volatile uint32_t *)((uintptr_t)g_lapic + reg);
+  }
+
+  int lapic_is_enabled(void) {
+      return (rdmsr(IA32_APIC_BASE) & IA32_APIC_BASE_ENABLE) != 0;
+  }
+
+  void lapic_init(void) {
+      uint64_t base = rdmsr(IA32_APIC_BASE);
+      base |= IA32_APIC_BASE_ENABLE;
+      wrmsr(IA32_APIC_BASE, base);
+
+      uint64_t phys = base & 0xfffff000ull;
+      g_lapic = (volatile uint32_t *)phys_to_virt(phys);
+
+      lapic_write(LAPIC_REG_TPR, 0);
+      lapic_write(LAPIC_REG_SVR, LAPIC_SPURIOUS_VECTOR | LAPIC_SVR_ENABLE);
+  }
+
+  void lapic_eoi(void) {
+      if (!g_lapic)
+          return;
+      lapic_write(LAPIC_REG_EOI, 0);
+  }
+
+  void lapic_timer_init(uint8_t vector) {
+      g_timer_vector = vector;
+      lapic_write(LAPIC_REG_TMR_DIV, LAPIC_TIMER_DIV_16);
+      lapic_write(LAPIC_REG_LVT_TIMER, (uint32_t)vector | LAPIC_LVT_MASK);
+      lapic_write(LAPIC_REG_TMR_INITCNT, 0);
+  }
+
+  void lapic_timer_oneshot(uint32_t ticks) {
+      if (!g_lapic || !g_timer_vector)
+          return;
+      if (ticks == 0)
+          ticks = 1;
+      lapic_write(LAPIC_REG_LVT_TIMER, (uint32_t)g_timer_vector);
+      lapic_write(LAPIC_REG_TMR_INITCNT, ticks);
+  }
+
+  void lapic_timer_oneshot_ms(uint32_t ms) {
+      if (!g_ticks_per_ms)
+          return;
+      uint64_t ticks = (uint64_t)g_ticks_per_ms * ms;
+      if (ticks > 0xffffffffull)
+          ticks = 0xffffffffull;
+      lapic_timer_oneshot((uint32_t)ticks);
+  }
+
+  void lapic_timer_stop(void) {
+      if (!g_lapic || !g_timer_vector)
+          return;
+      lapic_write(LAPIC_REG_LVT_TIMER, (uint32_t)g_timer_vector | LAPIC_LVT_MASK);
+      lapic_write(LAPIC_REG_TMR_INITCNT, 0);
+  }
+
+  uint32_t lapic_timer_ticks_per_ms(void) {
+      return g_ticks_per_ms;
+  }
+
+  uint32_t lapic_timer_calibrate(uint32_t pit_us) {
+      if (!g_lapic || pit_us == 0)
+          return 0;
+
+      lapic_timer_stop();
+      lapic_write(LAPIC_REG_TMR_DIV, LAPIC_TIMER_DIV_16);
+
+      pit_oneshot_us(pit_us);
+      lapic_write(LAPIC_REG_TMR_INITCNT, 0xffffffffu);
+
+      while (pit_read_count() != 0)
+          __asm__ volatile("pause");
+
+      uint32_t cur = lapic_read(LAPIC_REG_TMR_CURRCNT);
+      uint64_t elapsed = (uint64_t)0xffffffffu - cur;
+      uint64_t tpm = (elapsed * 1000ull) / pit_us;
+      if (tpm == 0)
+          tpm = 1;
+      g_ticks_per_ms = (uint32_t)tpm;
+
+      lapic_timer_stop();
+      return g_ticks_per_ms;
+  }
+
+  - kernel/arch/x86_64/cpu/pit.h (add prototype)
+
+  uint16_t pit_read_count(void);
+
+  - kernel/arch/x86_64/cpu/pit.c (add function near other helpers)
+
+  uint16_t pit_read_count(void) {
+      outb(PIT_CMD, 0x00);
+      uint8_t lo = inb(PIT_CH0);
+      uint8_t hi = inb(PIT_CH0);
+      return (uint16_t)(lo | ((uint16_t)hi << 8));
+  }
+
+  - kernel/arch/x86_64/cpu/isr.S (add LAPIC IRQ stubs after the existing IRQ 47 block)
+
+  IRQ 240
+  IRQ 255
+
+  - kernel/arch/x86_64/cpu/idt.c (add externs and gates)
+
+  extern void irq_240(void);
+  extern void irq_255(void);
+
+  idt_set_gate(240, irq_240, IDT_TYPE_INTERRUPT, 0);
+  idt_set_gate(255, irq_255, IDT_TYPE_INTERRUPT, 0);
+
+  - kernel/arch/x86_64/cpu/irq.h (add vector handler API)
+
+  void irq_register_vector_handler(uint8_t vector, irq_handler_t handler);
+
+  - kernel/arch/x86_64/cpu/irq.c (route non-PIC vectors to LAPIC EOI)
+
+  #include "lapic.h"
+
+  static irq_handler_t g_handlers[16];
+  static irq_handler_t g_vector_handlers[256];
+
+  void irq_init(void) {
+      pic_init(IRQ_BASE, IRQ_BASE + 8);
+      for (uint8_t i = 0; i < 16; i++)
+          pic_set_mask(i);
+  }
+
+  void irq_register_vector_handler(uint8_t vector, irq_handler_t handler) {
+      g_vector_handlers[vector] = handler;
+  }
+
+  void irq_common_handler(isr_frame_t *f) {
+      uint8_t vec = (uint8_t)f->vector;
+
+      if (vec >= IRQ_BASE && vec < IRQ_BASE + 16) {
+          uint8_t irq = (uint8_t)(vec - IRQ_BASE);
+          if (g_handlers[irq])
+              g_handlers[irq](f);
+          pic_send_eoi(irq);
+          return;
+      }
+
+      if (g_vector_handlers[vec])
+          g_vector_handlers[vec](f);
+
+      if (lapic_is_enabled() && vec != LAPIC_SPURIOUS_VECTOR)
+          lapic_eoi();
+  }
+
+  - kernel/core/sched.h (add API for tickless timer)
+
+  void sched_set_quantum_ticks(uint32_t ticks);
+  void sched_start(void);
+
+  - kernel/core/sched.c (rearm one-shot timer only when needed)
+
+  #include "../arch/x86_64/cpu/lapic.h"
+
+  static uint32_t g_quantum_ticks = 0;
+
+  void sched_set_quantum_ticks(uint32_t ticks) { g_quantum_ticks = ticks; }
+
+  static void sched_arm_timer(void) {
+      if (!g_quantum_ticks)
+          return;
+
+      thread_t *next = pick_next();
+      if (next == g_current) {
+          lapic_timer_stop();
+          return;
+      }
+      lapic_timer_oneshot(g_quantum_ticks);
+  }
+
+  void sched_start(void) {
+      if (!g_current)
+          return;
+      sched_arm_timer();
+  }
+
+  void sched_add(thread_t *t) {
+      if (!g_current) {
+          sched_init(t);
+          return;
+      }
+
+      t->next = g_current->next;
+      g_current->next = t;
+
+      if (g_quantum_ticks)
+          sched_arm_timer();
+  }
+
+  void sched_on_tick(isr_frame_t *frame) {
+      if (!g_current)
+          return;
+
+      if ((frame->cs & 3) != 3) {
+          sched_arm_timer();
+          return;
+      }
+
+      g_current->frame = *frame;
+
+      thread_t *next = pick_next();
+      if (next != g_current) {
+          g_current->state = THREAD_READY;
+          next->state = THREAD_RUNNING;
+          g_current = next;
+
+          g_cpu_local.kernel_rsp = next->kstack_top;
+          gdt_set_kernel_stack(next->kstack_top);
+
+          *frame = next->frame;
+      }
+
+      sched_arm_timer();
+  }
+
+  - kernel/core/kmain.c (swap PIT tick for LAPIC one-shot)
+
+  #include "../arch/x86_64/cpu/lapic.h"
+
+  #define LAPIC_TIMER_VECTOR 0xF0
+
+  Replace the PIT tick section with:
+
+          kprintln("[init] idt");
+          idt_init();
+          irq_init();
+
+          kprintln("[init] lapic");
+          lapic_init();
+          lapic_timer_init(LAPIC_TIMER_VECTOR);
+          uint32_t tpm = lapic_timer_calibrate(10000);
+          if (!tpm)
+              panic("lapic timer calibration failed");
+
+          sched_set_quantum_ticks(tpm * 10);
+          irq_register_vector_handler(LAPIC_TIMER_VECTOR, sched_on_tick);
+          sched_start();
+
+          idt_enable();
+          kprintln("[init] syscall");
+          syscall_init();
+
+  Remove:
+
+          irq_register_handler(0, sched_on_tick);
+          pit_init(1000);
+
+  - kernel/CMakeLists.txt (add new source)
+
+    arch/x86_64/cpu/lapic.c
+
+  If you want absolutely zero PIT usage (even for calibration), I can swap
+  lapic_timer_calibrate to TSC/HPET or TSC-deadline. Next steps you might want: 1)
+  build/boot to confirm the LAPIC timer vector fires and switches, 2) add a real idle
+  thread and call sched_start() when a blocked thread becomes ready.
+
+
+
+› Find and fix a bug in @filename
+
+  84% context left · ? for shortcuts

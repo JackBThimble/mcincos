@@ -24,7 +24,7 @@ static inline void write_cr3(uint64_t v) {
                      : "memory");
 }
 
-static inline void invlpg(uint64_t va) {
+static inline void invlpg_local(uint64_t va) {
     __asm__ volatile(".intel_syntax noprefix\n"
                      "invlpg [rax]\n"
                      ".att_syntax prefix\n"
@@ -40,6 +40,11 @@ static inline uint16_t idx_pt(uint64_t va) { return (va >> 12) & 0x1ff; }
 
 static uint64_t g_kernel_cr3_phys = 0;
 
+/*
+ * VMM assumes:
+ * - all page table pages are allocated from PMM
+ * - PMM pages are permanently mapped in HHDM
+ */
 static inline uint64_t *pt_virt(uint64_t pt_phys) {
     return (uint64_t *)phys_to_virt(pt_phys);
 }
@@ -90,12 +95,14 @@ static uint64_t ensure_pt(uint64_t pml4_phys, uint64_t va, uint64_t flags) {
     return pd[i2] & ~0xfffull;
 }
 
-int vmm_map_page(uint64_t virt, uint64_t phys, uint64_t flags) {
+static int vmm_map_page_cr3(uint64_t cr3_phys, uint64_t virt, uint64_t phys,
+                            uint64_t flags) {
     virt = align_down(virt);
     phys = align_down(phys);
 
-    uint64_t cr3 = read_cr3() & ~0xfffull;
-    uint64_t pt_phys = ensure_pt(cr3, virt, flags);
+    flags &= ~(PTE_PCD | PTE_PWT);
+
+    uint64_t pt_phys = ensure_pt(cr3_phys, virt, flags);
     if (!pt_phys)
         return -1;
 
@@ -106,15 +113,14 @@ int vmm_map_page(uint64_t virt, uint64_t phys, uint64_t flags) {
     if (flags & PTE_NX)
         pt[i1] |= PTE_NX;
 
-    invlpg(virt);
+    invlpg_local(virt);
     return 0;
 }
 
-int vmm_unmap_page(uint64_t virt) {
+static int vmm_unmap_page_cr3(uint64_t cr3_phys, uint64_t virt) {
     virt = align_down(virt);
 
-    uint64_t cr3 = read_cr3() & ~0xfffull;
-    uint64_t *pml4 = pt_virt(cr3);
+    uint64_t *pml4 = pt_virt(cr3_phys);
 
     uint64_t e4 = pml4[idx_pml4(virt)];
     if (!(e4 & PTE_P))
@@ -133,10 +139,65 @@ int vmm_unmap_page(uint64_t virt) {
 
     uint16_t i1 = idx_pt(virt);
     pt[i1] = 0;
-    invlpg(virt);
+    invlpg_local(virt);
     return 0;
 }
 
+int vmm_map_page(uint64_t virt, uint64_t phys, uint64_t flags) {
+    uint64_t cr3 = read_cr3() & ~0xfffull;
+    return vmm_map_page_cr3(cr3, virt, phys, flags);
+}
+
+/* NOTE: vmm_unmap_page() does not reclaim page tables
+ * page table GC will be added later
+ */
+int vmm_unmap_page(uint64_t virt) {
+    uint64_t cr3 = read_cr3() & ~0xfffull;
+    return vmm_unmap_page_cr3(cr3, virt);
+}
+
+int vmm_map_page_space(vmm_space_t space, uint64_t virt, uint64_t phys,
+                       uint64_t flags) {
+    if (!space.pml4_phys)
+        return -1;
+
+    uint64_t old = read_cr3() & ~0xfffull;
+    write_cr3(space.pml4_phys);
+    int rc = vmm_map_page_cr3(space.pml4_phys, virt, phys, flags);
+    write_cr3(old);
+    return rc;
+}
+
+int vmm_unmap_page_space(vmm_space_t space, uint64_t virt) {
+    if (!space.pml4_phys)
+        return -1;
+
+    uint64_t old = read_cr3() & ~0xfffull;
+    write_cr3(space.pml4_phys);
+    int rc = vmm_unmap_page_cr3(space.pml4_phys, virt);
+    write_cr3(old);
+    return rc;
+}
+
+int vmm_map_page_mmio(uint64_t virt, uint64_t phys, uint64_t flags) {
+    uint64_t cr3 = read_cr3() & ~0xfffull;
+    virt = align_down(virt);
+    phys = align_down(phys);
+
+    uint64_t pt_phys = ensure_pt(cr3, virt, flags);
+    if (!pt_phys)
+        return -1;
+
+    uint64_t *pt = pt_virt(pt_phys);
+    uint16_t i1 = idx_pt(virt);
+
+    pt[i1] = (phys & ~0xfffull) | (flags & ~PTE_NX) | PTE_P;
+    if (flags & PTE_NX)
+        pt[i1] |= PTE_NX;
+
+    invlpg_local(virt);
+    return 0;
+}
 void vmm_init(void) {
     g_kernel_cr3_phys = read_cr3() & ~0xfffull;
     kprint("[vmm] init ok\n");

@@ -4,15 +4,22 @@
 #include "../arch/x86_64/cpu/gdt.h"
 #include "../arch/x86_64/cpu/idt.h"
 #include "../arch/x86_64/cpu/irq.h"
-#include "../arch/x86_64/cpu/pit.h"
+#include "../arch/x86_64/cpu/lapic.h"
 #include "../arch/x86_64/cpu/syscall.h"
+#include "../arch/x86_64/cpu/timer.h"
 
-#include "../mem/pmm.h"
-#include "../mem/vmm.h"
+#include "../mm/pmm.h"
+#include "../mm/vmm.h"
+
+#include "../boot/boot_info.h"
 
 #include "core/panic.h"
+#include "lapic.h"
 #include "print.h"
 #include "sched.h"
+
+#define TIMER_VECTOR 0xf0
+#define SCHED_QUANTUM_NS 5000000ull
 
 static void early_banner(void) {
     kprintln(
@@ -83,6 +90,8 @@ void kmain(void) {
     // 0) EARLY BOOT: assume Limine got us to long mode/paging
     // =========================================================================
     early_banner();
+    boot_info_init();
+    print_boot_info();
 
     // TODO: route early logs to BOTH serial + limine terminal (if present)
     // TODO: add log levels + ring buffer for post-mortem panic dumps
@@ -192,8 +201,22 @@ void kmain(void) {
         kprintln("[init] idt");
         idt_init();
         irq_init();
-        irq_register_handler(0, sched_on_tick);
-        pit_init(1000);
+
+        kprintln("[init] timer");
+        timer_init(TIMER_VECTOR);
+
+        timer_source_t src = timer_source();
+        if (src == TIMER_SRC_TSC_DEADLINE)
+            kprintln("[timer] tsc-deadline");
+        else if (src == TIMER_SRC_LAPIC)
+            kprintln("[timer] lapic oneshot");
+        else
+            panic("timer init failed");
+
+        irq_register_vector_handler(timer_vector(), sched_on_tick);
+        sched_set_quantum_ns(SCHED_QUANTUM_NS);
+        sched_start();
+
         idt_enable();
         kprintln("[init] syscall");
         syscall_init();

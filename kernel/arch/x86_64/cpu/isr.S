@@ -154,6 +154,8 @@ IRQ 44
 IRQ 45
 IRQ 46
 IRQ 47
+IRQ 240
+IRQ 255
 
 /* Table of stub pointers for idt.c */
 .section .rodata

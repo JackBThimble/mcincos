@@ -1,12 +1,12 @@
 #include "pmm.h"
-#include "core/print.h"
+#include "boot/boot_info.h"
 #include <limine.h>
 #include <stdint.h>
 
-extern volatile struct limine_hhdm_request limine_hhdm_request;
-extern volatile struct limine_memmap_request limine_memmap_request;
-extern volatile struct limine_executable_address_request
-    limine_executable_address_request;
+// extern volatile struct limine_hhdm_request limine_hhdm_request;
+// extern volatile struct limine_memmap_request limine_memmap_request;
+// extern volatile struct limine_executable_address_request
+//     limine_executable_address_request;
 
 extern uint8_t __kernel_start;
 extern uint8_t __kernel_end;
@@ -58,15 +58,15 @@ static int ranges_overlap(uint64_t a0, uint64_t a1, uint64_t b0, uint64_t b1) {
 }
 
 static void kernel_phys_range(uint64_t *out_start, uint64_t *out_end) {
-    struct limine_executable_address_response *er =
-        limine_executable_address_request.response;
-    if (!er) {
-        for (;;)
-            __asm__ volatile("hlt");
-    }
+    // struct limine_executable_address_response *er =
+    //     limine_executable_address_request.response;
+    // if (!er) {
+    //     for (;;)
+    //         __asm__ volatile("hlt");
+    // }
 
-    uint64_t virt_base = er->virtual_base;
-    uint64_t phys_base = er->physical_base;
+    uint64_t virt_base = g_boot_info.kernel_address.virtual_base;
+    uint64_t phys_base = g_boot_info.kernel_address.physical_base;
 
     uint64_t kstart_v = (uint64_t)&__kernel_start;
     uint64_t kend_v = (uint64_t)&__kernel_end;
@@ -79,11 +79,11 @@ static void kernel_phys_range(uint64_t *out_start, uint64_t *out_end) {
 }
 
 static uint64_t find_max_phys(void) {
-    struct limine_memmap_response *mm = limine_memmap_request.response;
+    // struct limine_memmap_response *mm = limine_memmap_request.response;
     uint64_t maxp = 0;
 
-    for (uint64_t i = 0; i < mm->entry_count; i++) {
-        struct limine_memmap_entry *e = mm->entries[i];
+    for (uint64_t i = 0; i < g_boot_info.memmap.entry_count; i++) {
+        struct limine_memmap_entry *e = g_boot_info.memmap.entries[i];
         if (e->type != LIMINE_MEMMAP_USABLE)
             continue;
         uint64_t end = e->base + e->length;
@@ -95,7 +95,7 @@ static uint64_t find_max_phys(void) {
 
 static uint64_t place_bitmap_phys(uint64_t bytes_needed, uint64_t kphys0,
                                   uint64_t kphys1) {
-    struct limine_memmap_response *mm = limine_memmap_request.response;
+    struct limine_memmap_response *mm = &g_boot_info.memmap;
 
     for (uint64_t i = 0; i < mm->entry_count; i++) {
         struct limine_memmap_entry *e = mm->entries[i];
@@ -122,14 +122,9 @@ static uint64_t place_bitmap_phys(uint64_t bytes_needed, uint64_t kphys0,
 }
 
 void pmm_init(void) {
-    if (!limine_hhdm_request.response || !limine_memmap_request.response) {
-        kprint("[pmm] hhdm or memmap request failed\n");
-        for (;;)
-            __asm__ volatile("hlt");
-    }
-    g_hhdm = limine_hhdm_request.response->offset;
+    g_hhdm = g_boot_info.hhdm_offset;
 
-    struct limine_memmap_response *mm = limine_memmap_request.response;
+    struct limine_memmap_response *mm = &g_boot_info.memmap;
 
     uint64_t kphys0 = 0, kphys1 = 0;
     kernel_phys_range(&kphys0, &kphys1);
