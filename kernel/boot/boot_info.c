@@ -249,7 +249,8 @@ void boot_info_init(void) {
         ((uint8_t *)&g_boot_info)[i] = 0;
 
     if (limine_executable_address_request.response)
-        g_boot_info.kernel_address = *limine_executable_address_request.response;
+        g_boot_info.kernel_address =
+            *limine_executable_address_request.response;
     if (limine_memmap_request.response)
         g_boot_info.memmap = *limine_memmap_request.response;
     if (limine_executable_file_request.response)
@@ -267,7 +268,8 @@ void boot_info_init(void) {
     if (limine_efi_memmap_request.response)
         g_boot_info.efi_memmap = *limine_efi_memmap_request.response;
     if (limine_efi_system_table_request.response)
-        g_boot_info.efi_system_table = *limine_efi_system_table_request.response;
+        g_boot_info.efi_system_table =
+            *limine_efi_system_table_request.response;
     if (limine_entry_point_request.response)
         g_boot_info.entry_point = *limine_entry_point_request.response;
     if (limine_firmware_type_request.response)
@@ -293,6 +295,87 @@ void boot_info_init(void) {
         g_boot_info.smp = *limine_mp_request.response;
     if (limine_stack_size_request.response)
         g_boot_info.stack_size = *limine_stack_size_request.response;
+}
+
+void print_framebuffer_info(void) {
+    kprintln("Framebuffer:");
+    if (!limine_framebuffer_request.response) {
+        kprintln("  not provided");
+    } else {
+        kprintlnf("  revision: %llu",
+                  (unsigned long long)g_boot_info.framebuffer.revision);
+        kprintlnf(
+            "  framebuffer_count: %llu",
+            (unsigned long long)g_boot_info.framebuffer.framebuffer_count);
+        if (!g_boot_info.framebuffer.framebuffers &&
+            g_boot_info.framebuffer.framebuffer_count) {
+            kprintln("  framebuffers: (null)");
+        }
+        for (uint64_t i = 0; i < g_boot_info.framebuffer.framebuffer_count;
+             i++) {
+            struct limine_framebuffer *fb =
+                g_boot_info.framebuffer.framebuffers
+                    ? g_boot_info.framebuffer.framebuffers[i]
+                    : NULL;
+            if (!fb) {
+                kprintlnf("  framebuffer[%llu]: (null)", (unsigned long long)i);
+                continue;
+            }
+            kprintlnf("  framebuffer[%llu]:", (unsigned long long)i);
+            kprintlnf("    address: 0x%llx",
+                      (unsigned long long)(uint64_t)(uintptr_t)fb->address);
+            kprintlnf("    width: %llu", (unsigned long long)fb->width);
+            kprintlnf("    height: %llu", (unsigned long long)fb->height);
+            kprintlnf("    pitch: %llu", (unsigned long long)fb->pitch);
+            kprintlnf("    bpp: %u", (unsigned)fb->bpp);
+            kprintlnf("    memory_model: %u (%s)", (unsigned)fb->memory_model,
+                      framebuffer_memory_model_name(fb->memory_model));
+            kprintlnf("    red_mask_size: %u", (unsigned)fb->red_mask_size);
+            kprintlnf("    red_mask_shift: %u", (unsigned)fb->red_mask_shift);
+            kprintlnf("    green_mask_size: %u", (unsigned)fb->green_mask_size);
+            kprintlnf("    green_mask_shift: %u",
+                      (unsigned)fb->green_mask_shift);
+            kprintlnf("    blue_mask_size: %u", (unsigned)fb->blue_mask_size);
+            kprintlnf("    blue_mask_shift: %u", (unsigned)fb->blue_mask_shift);
+            kprintlnf("    edid_size: %llu", (unsigned long long)fb->edid_size);
+            kprintlnf("    edid: 0x%llx",
+                      (unsigned long long)(uint64_t)(uintptr_t)fb->edid);
+            kprintlnf("    mode_count: %llu",
+                      (unsigned long long)fb->mode_count);
+            if (!fb->modes && fb->mode_count) {
+                kprintln("    modes: (null)");
+            }
+            for (uint64_t m = 0; m < fb->mode_count; m++) {
+                struct limine_video_mode *mode =
+                    fb->modes ? fb->modes[m] : NULL;
+                if (!mode) {
+                    kprintlnf("    mode[%llu]: (null)", (unsigned long long)m);
+                    continue;
+                }
+                kprintlnf("    mode[%llu]:", (unsigned long long)m);
+                kprintlnf("      pitch: %llu", (unsigned long long)mode->pitch);
+                kprintlnf("      width: %llu", (unsigned long long)mode->width);
+                kprintlnf("      height: %llu",
+                          (unsigned long long)mode->height);
+                kprintlnf("      bpp: %u", (unsigned)mode->bpp);
+                kprintlnf("      memory_model: %u (%s)",
+                          (unsigned)mode->memory_model,
+                          framebuffer_memory_model_name(mode->memory_model));
+                kprintlnf("      red_mask_size: %u",
+                          (unsigned)mode->red_mask_size);
+                kprintlnf("      red_mask_shift: %u",
+                          (unsigned)mode->red_mask_shift);
+                kprintlnf("      green_mask_size: %u",
+                          (unsigned)mode->green_mask_size);
+                kprintlnf("      green_mask_shift: %u",
+                          (unsigned)mode->green_mask_shift);
+                kprintlnf("      blue_mask_size: %u",
+                          (unsigned)mode->blue_mask_size);
+                kprintlnf("      blue_mask_shift: %u",
+                          (unsigned)mode->blue_mask_shift);
+            }
+        }
+    }
 }
 
 void print_boot_info(void) {
@@ -373,8 +456,7 @@ void print_boot_info(void) {
     } else {
         kprintlnf("  revision: %llu",
                   (unsigned long long)g_boot_info.kernel.revision);
-        print_limine_file("kernel",
-                          g_boot_info.kernel.executable_file);
+        print_limine_file("kernel", g_boot_info.kernel.executable_file);
     }
 
     kprintln("Modules:");
@@ -390,8 +472,8 @@ void print_boot_info(void) {
         }
         for (uint64_t i = 0; i < g_boot_info.module.module_count; i++) {
             struct limine_file *mod = g_boot_info.module.modules
-                ? g_boot_info.module.modules[i]
-                : NULL;
+                                          ? g_boot_info.module.modules[i]
+                                          : NULL;
             print_limine_file_indexed("module", i, mod);
         }
     }
@@ -424,9 +506,8 @@ void print_boot_info(void) {
     } else {
         kprintlnf("  revision: %llu",
                   (unsigned long long)g_boot_info.efi_memmap.revision);
-        kprintlnf("  memmap: 0x%llx",
-                  (unsigned long long)(uint64_t)(uintptr_t)
-                      g_boot_info.efi_memmap.memmap);
+        kprintlnf("  memmap: 0x%llx", (unsigned long long)(uint64_t)(uintptr_t)
+                                          g_boot_info.efi_memmap.memmap);
         kprintlnf("  memmap_size: %llu",
                   (unsigned long long)g_boot_info.efi_memmap.memmap_size);
         kprintlnf("  desc_size: %llu",
@@ -504,18 +585,16 @@ void print_boot_info(void) {
         }
         for (uint64_t i = 0; i < g_boot_info.memmap.entry_count; i++) {
             struct limine_memmap_entry *e = g_boot_info.memmap.entries
-                ? g_boot_info.memmap.entries[i]
-                : NULL;
+                                                ? g_boot_info.memmap.entries[i]
+                                                : NULL;
             if (!e) {
-                kprintlnf("  entry[%llu]: (null)",
-                          (unsigned long long)i);
+                kprintlnf("  entry[%llu]: (null)", (unsigned long long)i);
                 continue;
             }
-            kprintlnf(
-                "  entry[%llu]: base=0x%llx length=0x%llx type=%llu (%s)",
-                (unsigned long long)i, (unsigned long long)e->base,
-                (unsigned long long)e->length, (unsigned long long)e->type,
-                memmap_type_name(e->type));
+            kprintlnf("  entry[%llu]: base=0x%llx length=0x%llx type=%llu (%s)",
+                      (unsigned long long)i, (unsigned long long)e->base,
+                      (unsigned long long)e->length,
+                      (unsigned long long)e->type, memmap_type_name(e->type));
         }
     }
 
@@ -525,9 +604,9 @@ void print_boot_info(void) {
     } else {
         kprintlnf("  revision: %llu",
                   (unsigned long long)g_boot_info.acpi.revision);
-        kprintlnf("  address: 0x%llx",
-                  (unsigned long long)(uint64_t)(uintptr_t)
-                      g_boot_info.acpi.address);
+        kprintlnf(
+            "  address: 0x%llx",
+            (unsigned long long)(uint64_t)(uintptr_t)g_boot_info.acpi.address);
     }
 
     kprintln("SMP:");
@@ -539,16 +618,14 @@ void print_boot_info(void) {
 #if defined(__x86_64__) || defined(__i386__)
         kprintlnf("  flags: 0x%x", (unsigned)g_boot_info.smp.flags);
 #else
-        kprintlnf("  flags: 0x%llx",
-                  (unsigned long long)g_boot_info.smp.flags);
+        kprintlnf("  flags: 0x%llx", (unsigned long long)g_boot_info.smp.flags);
 #endif
 #if defined(__x86_64__) || defined(__i386__)
         kprintlnf("  x2apic: %s",
                   (g_boot_info.smp.flags & LIMINE_MP_RESPONSE_X86_64_X2APIC)
                       ? "yes"
                       : "no");
-        kprintlnf("  bsp_lapic_id: %u",
-                  (unsigned)g_boot_info.smp.bsp_lapic_id);
+        kprintlnf("  bsp_lapic_id: %u", (unsigned)g_boot_info.smp.bsp_lapic_id);
 #elif defined(__aarch64__)
         kprintlnf("  bsp_mpidr: 0x%llx",
                   (unsigned long long)g_boot_info.smp.bsp_mpidr);
@@ -562,9 +639,8 @@ void print_boot_info(void) {
             kprintln("  cpus: (null)");
         }
         for (uint64_t i = 0; i < g_boot_info.smp.cpu_count; i++) {
-            struct limine_mp_info *info = g_boot_info.smp.cpus
-                ? g_boot_info.smp.cpus[i]
-                : NULL;
+            struct limine_mp_info *info =
+                g_boot_info.smp.cpus ? g_boot_info.smp.cpus[i] : NULL;
             if (!info) {
                 kprintlnf("  cpu[%llu]: (null)", (unsigned long long)i);
                 continue;
@@ -583,101 +659,15 @@ void print_boot_info(void) {
 #elif defined(__riscv) && (__riscv_xlen == 64)
             kprintlnf("    processor_id: %llu",
                       (unsigned long long)info->processor_id);
-            kprintlnf("    hartid: %llu",
-                      (unsigned long long)info->hartid);
+            kprintlnf("    hartid: %llu", (unsigned long long)info->hartid);
             kprintlnf("    reserved: 0x%llx",
                       (unsigned long long)info->reserved);
 #endif
-            kprintlnf("    goto_address: 0x%llx",
-                      (unsigned long long)(uint64_t)(uintptr_t)
-                          info->goto_address);
+            kprintlnf(
+                "    goto_address: 0x%llx",
+                (unsigned long long)(uint64_t)(uintptr_t)info->goto_address);
             kprintlnf("    extra_argument: 0x%llx",
                       (unsigned long long)info->extra_argument);
-        }
-    }
-
-    kprintln("Framebuffer:");
-    if (!limine_framebuffer_request.response) {
-        kprintln("  not provided");
-    } else {
-        kprintlnf("  revision: %llu",
-                  (unsigned long long)g_boot_info.framebuffer.revision);
-        kprintlnf("  framebuffer_count: %llu",
-                  (unsigned long long)g_boot_info.framebuffer.framebuffer_count);
-        if (!g_boot_info.framebuffer.framebuffers &&
-            g_boot_info.framebuffer.framebuffer_count) {
-            kprintln("  framebuffers: (null)");
-        }
-        for (uint64_t i = 0; i < g_boot_info.framebuffer.framebuffer_count;
-             i++) {
-            struct limine_framebuffer *fb = g_boot_info.framebuffer.framebuffers
-                ? g_boot_info.framebuffer.framebuffers[i]
-                : NULL;
-            if (!fb) {
-                kprintlnf("  framebuffer[%llu]: (null)",
-                          (unsigned long long)i);
-                continue;
-            }
-            kprintlnf("  framebuffer[%llu]:", (unsigned long long)i);
-            kprintlnf("    address: 0x%llx",
-                      (unsigned long long)(uint64_t)(uintptr_t)fb->address);
-            kprintlnf("    width: %llu", (unsigned long long)fb->width);
-            kprintlnf("    height: %llu", (unsigned long long)fb->height);
-            kprintlnf("    pitch: %llu", (unsigned long long)fb->pitch);
-            kprintlnf("    bpp: %u", (unsigned)fb->bpp);
-            kprintlnf("    memory_model: %u (%s)",
-                      (unsigned)fb->memory_model,
-                      framebuffer_memory_model_name(fb->memory_model));
-            kprintlnf("    red_mask_size: %u", (unsigned)fb->red_mask_size);
-            kprintlnf("    red_mask_shift: %u", (unsigned)fb->red_mask_shift);
-            kprintlnf("    green_mask_size: %u", (unsigned)fb->green_mask_size);
-            kprintlnf("    green_mask_shift: %u",
-                      (unsigned)fb->green_mask_shift);
-            kprintlnf("    blue_mask_size: %u", (unsigned)fb->blue_mask_size);
-            kprintlnf("    blue_mask_shift: %u",
-                      (unsigned)fb->blue_mask_shift);
-            kprintlnf("    edid_size: %llu",
-                      (unsigned long long)fb->edid_size);
-            kprintlnf("    edid: 0x%llx",
-                      (unsigned long long)(uint64_t)(uintptr_t)fb->edid);
-            kprintlnf("    mode_count: %llu",
-                      (unsigned long long)fb->mode_count);
-            if (!fb->modes && fb->mode_count) {
-                kprintln("    modes: (null)");
-            }
-            for (uint64_t m = 0; m < fb->mode_count; m++) {
-                struct limine_video_mode *mode = fb->modes
-                    ? fb->modes[m]
-                    : NULL;
-                if (!mode) {
-                    kprintlnf("    mode[%llu]: (null)",
-                              (unsigned long long)m);
-                    continue;
-                }
-                kprintlnf("    mode[%llu]:", (unsigned long long)m);
-                kprintlnf("      pitch: %llu",
-                          (unsigned long long)mode->pitch);
-                kprintlnf("      width: %llu",
-                          (unsigned long long)mode->width);
-                kprintlnf("      height: %llu",
-                          (unsigned long long)mode->height);
-                kprintlnf("      bpp: %u", (unsigned)mode->bpp);
-                kprintlnf("      memory_model: %u (%s)",
-                          (unsigned)mode->memory_model,
-                          framebuffer_memory_model_name(mode->memory_model));
-                kprintlnf("      red_mask_size: %u",
-                          (unsigned)mode->red_mask_size);
-                kprintlnf("      red_mask_shift: %u",
-                          (unsigned)mode->red_mask_shift);
-                kprintlnf("      green_mask_size: %u",
-                          (unsigned)mode->green_mask_size);
-                kprintlnf("      green_mask_shift: %u",
-                          (unsigned)mode->green_mask_shift);
-                kprintlnf("      blue_mask_size: %u",
-                          (unsigned)mode->blue_mask_size);
-                kprintlnf("      blue_mask_shift: %u",
-                          (unsigned)mode->blue_mask_shift);
-            }
         }
     }
 }
